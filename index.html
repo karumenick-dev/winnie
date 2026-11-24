@@ -746,13 +746,50 @@
   </button>
 
   <script>
+    // Add or edit any custom messages you want here
+    const MESSAGES = [
+      "THANK YOU WINNIE",
+      "FOR THE YEARS OF AMAZING FRIENDSHIP",
+      "AND FOR BEING THERE",
+      "I APPRECIATE YOU"
+    ];
+
+    let messageIndex = 0;
     let loadTimer = null;
+
+    function renderMessage(text) {
+      const container = document.querySelector(".name-reveal");
+      container.setAttribute("aria-label", text);
+      container.innerHTML = "";
+
+      const words = text.trim().split(/\s+/);
+
+      words.forEach((word, wordIdx) => {
+        const wordEl = document.createElement("span");
+        wordEl.className = "word";
+
+        [...word].forEach((char, charIdx) => {
+          const charEl = document.createElement("span");
+          charEl.textContent = char;
+          charEl.style.animationDelay = `${(charIdx * 0.12).toFixed(2)}s`;
+          wordEl.appendChild(charEl);
+        });
+
+        container.appendChild(wordEl);
+
+        if (wordIdx < words.length - 1) {
+          const spacer = document.createElement("span");
+          spacer.className = "space";
+          spacer.setAttribute("aria-hidden", "true");
+          container.appendChild(spacer);
+        }
+      });
+    }
 
     function startAnimation(delayMs = 900) {
       clearTimeout(loadTimer);
       document.body.classList.add("not-loaded");
 
-      // Restart CSS animations cleanly on every animated element
       document.querySelectorAll("*").forEach((el) => {
         const animName = getComputedStyle(el).animationName;
         if (animName && animName !== "none") {
@@ -768,10 +805,13 @@
     }
 
     window.onload = () => {
+      renderMessage(MESSAGES[messageIndex]);
       startAnimation(900);
     };
 
     document.getElementById("replayBtn").addEventListener("click", () => {
+      messageIndex = (messageIndex + 1) % MESSAGES.length;
+      renderMessage(MESSAGES[messageIndex]);
       startAnimation(120);
     });
   </script>
